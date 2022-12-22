@@ -2,6 +2,7 @@
 const fs = require('fs');
 const inquirer = require('inquirer');
 const generateMarkdown = require('./utils/generateMarkdown');
+const renderLicenseBadge = require('./utils/generateMarkdown');
 
 // TODO: Create an array of questions for user input
 const questions = [
@@ -34,18 +35,18 @@ const questions = [
         type: 'checkbox',
         message: 'pick all Licenses that apply.',
         name: 'license',
-        choices: ['Apache 2.0', 'Boost Software', 'BSD 3-Clause', 'CC0', 'GNU GPL v3'],
+        choices: ['ISC', 'Apache_2.0', 'MIT', 'None'],
     },
     //Contribution
     {
         type: 'input',
-        message: 'Enter contributions to this project.',
+        message: 'Enter how to contribute to this project.',
         name: 'contribution'
     },
     //Tests
     {
         type: 'input',
-        message: 'Type a description of your program',
+        message: 'Enter how to run tests on the program.',
         name: 'tests'
     },
     //Git Username
@@ -64,10 +65,10 @@ const questions = [
 
 // TODO: Create a function to write README file
 //creates README file with name and content
-function writeToFile(fileName, data) {
-    let finishedReadMe = generateMarkdown
+function writeToFile(data) {
+    
 
-    fs.appendFile('README.txt', finishedReadMe, (err) =>
+    fs.writeFile('README.md', data, (err) =>
     err ? console.error(err) : console.log('README created!')
     );
 }
@@ -77,8 +78,14 @@ function writeToFile(fileName, data) {
 function init() {
     inquirer
         .prompt(questions)
-        .then
+        
+        .then((data) => {
+            var myReadMe = generateMarkdown(data)
+            writeToFile(myReadMe)
+        }
+        )
 }
 
 // Function call to initialize app
+module.exports = writeToFile;
 init();
